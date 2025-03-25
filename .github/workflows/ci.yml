@@ -1,0 +1,32 @@
+name: CI Pipeline - Backend
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Repository auschecken (Checkout)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Java-Umgebung einrichten (Set up JDK)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Build-Prozess ausführen (Build with Gradle)
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # 4. Tests ausführen (Run tests)
+      - name: Run tests with Gradle
+        run: ./gradlew test
