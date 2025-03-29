@@ -1,22 +1,26 @@
 package org.example.mankomaniaserverkotlin.websocket.dispatcher
 
-import org.springframework.web.socket.WebSocketSession
-import org.example.mankomaniaserverkotlin.websocket.message.GameMessage
 import org.example.mankomaniaserverkotlin.websocket.handler.BaseCommandHandler
-import org.example.mankomaniaserverkotlin.websocket.handler.MoveCommandHandler
+import org.example.mankomaniaserverkotlin.websocket.message.GameMessage
+import org.springframework.web.socket.WebSocketSession
 
 class MessageDispatcher {
     private val handlers: MutableMap<String, BaseCommandHandler> = mutableMapOf()
 
     init {
-        registerHandler("move", MoveCommandHandler())
     }
 
-    fun registerHandler(type: String, handler: BaseCommandHandler) {
+    fun registerHandler(
+        type: String,
+        handler: BaseCommandHandler,
+    ) {
         handlers[type] = handler
     }
 
-    fun dispatch(message: GameMessage, session: WebSocketSession) {
+    fun dispatch(
+        message: GameMessage,
+        session: WebSocketSession,
+    ) {
         val handler = handlers[message.type]
         if (handler != null) {
             try {
