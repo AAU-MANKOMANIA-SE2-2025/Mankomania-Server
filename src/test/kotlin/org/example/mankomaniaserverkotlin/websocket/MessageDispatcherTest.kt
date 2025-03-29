@@ -19,7 +19,6 @@ import org.springframework.web.socket.WebSocketSession
  *  - Logs any exception thrown by a handler.
  */
 class MessageDispatcherTest {
-
     private lateinit var dispatcher: MessageDispatcher
     private lateinit var mockSession: WebSocketSession
     private lateinit var dummyHandler: DummyHandler
@@ -73,11 +72,13 @@ class MessageDispatcherTest {
     @Test
     fun `should log exception when handler throws error`() {
         // Arrange: Create a handler that intentionally throws an exception.
-        val throwingHandler = object : BaseCommandHandler {
-            override fun handle(message: GameMessage, session: WebSocketSession) {
-                throw RuntimeException("Simulated handler error")
+        val throwingHandler =
+            object : BaseCommandHandler {
+                override fun handle(
+                    message: GameMessage,
+                    session: WebSocketSession,
+                ): Unit = throw RuntimeException("Simulated handler error")
             }
-        }
         // Register the throwing handler under a specific message type.
         dispatcher.registerHandler("errorTest", throwingHandler)
         val errorTestMessage = object : GameMessage("errorTest", "corr-004") {}
@@ -99,7 +100,7 @@ class MessageDispatcherTest {
         val logOutput = outputStream.toString()
         assertTrue(
             logOutput.contains("Simulated handler error"),
-            "Expected log output to contain the simulated error message"
+            "Expected log output to contain the simulated error message",
         )
     }
 
@@ -112,7 +113,10 @@ class MessageDispatcherTest {
         var receivedMessage: GameMessage? = null
         var receivedSession: WebSocketSession? = null
 
-        override fun handle(message: GameMessage, session: WebSocketSession) {
+        override fun handle(
+            message: GameMessage,
+            session: WebSocketSession,
+        ) {
             wasCalled = true
             receivedMessage = message
             receivedSession = session
