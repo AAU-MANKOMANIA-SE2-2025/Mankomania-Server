@@ -1,11 +1,26 @@
-/**
- * @file WebSocketManager.kt
- * @author 
- * @since 
- * @description Verwaltet WebSocket-Verbindungen und leitet Nachrichten weiter.
- */
 package org.example.mankomaniaserverkotlin.websocket
 
-class WebSocketManager {
-    // TODO: Implementiere WebSocket-Verbindungslogik und Nachrichtenrouting
+import org.springframework.web.socket.WebSocketSession
+
+/**
+ * WebSocketManager manages active WebSocket sessions.
+ *
+ * It maintains a mapping from session ID to WebSocketSession.
+ */
+object WebSocketManager {
+    private val sessions = mutableMapOf<String, WebSocketSession>()
+
+    fun addSession(session: WebSocketSession) {
+        sessions[session.id] = session
+    }
+
+    fun removeSession(session: WebSocketSession) {
+        sessions.remove(session.id)
+    }
+
+    fun getSession(id: String): WebSocketSession? = sessions[id]
+
+    fun clearSessions() {
+        sessions.clear()
+    }
 }
