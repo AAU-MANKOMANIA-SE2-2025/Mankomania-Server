@@ -7,4 +7,4 @@ package com.example.mankomania_client.model
  * @property index The position of this field on the board (0-based).
  * @property hasBranch Indicates whether the field allows the player to choose a different path (branch).
  */
-data class Field(val index:Int, val hasBranch: Boolean)
+data class Field(val index:Int, val hasBranch: Boolean, val branchOptions: List<Int> = emptyList())

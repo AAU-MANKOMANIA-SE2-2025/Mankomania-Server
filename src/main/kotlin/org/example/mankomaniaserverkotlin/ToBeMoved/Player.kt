@@ -21,8 +21,19 @@ data class Player(
      * @return True if the player landed on a branching field; false otherwise.
      */
     fun move(steps:Int, board:Board): Boolean{
+        require(steps >= 0) {"Steps must be non-negative."}
+
         position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
-        return hasBranch(board)
+
+        //retrieve the field once and check for branch
+        val currentField = board.getField(position) //Board.getField(position) must return a Field with populated branchOptions if hasBranch == true
+        return if(currentField.hasBranch) {
+            chooseBranch(currentField.branchOptions)
+            true
+        }else{
+            false
+        }
+
     }
 
     /**
@@ -34,6 +45,23 @@ data class Player(
     fun hasBranch(board:Board): Boolean{
         return board.getField(position).hasBranch
     }
+
+    /**
+     * Simulates a branch choice when landing on a branching field.
+     *
+     * @param branchOptions A list of possible next field indices to choose from
+     */
+    fun chooseBranch(branchOptions: List<Int>){
+        //simulate a basic decision: choose the first option
+        val chosen = branchOptions.firstOrNull()
+        if(chosen != null) {
+            println("Branching: Player '$name' chooses to go to field $chosen.")
+            position = chosen
+        }else{
+            println("Branching: No branch options available for Player '$name'.")
+        }
+    }
+
     /**
      * Returns the player's current position on the board.
      *
