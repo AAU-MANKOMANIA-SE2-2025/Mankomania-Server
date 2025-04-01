@@ -14,14 +14,26 @@ data class Player(
     /**
      * Moves the player forward on the board by a given number of steps.
      * If the end of the board is reached, the player wraps around to the start.
+     * After moving, returns whether the new field is a branching field.
      *
      * @param steps Number of steps to move forward.
-     * @param board The game board, which provides the size for wrapping logic.
+     * @param board The game board used for size and field information.
+     * @return True if the player landed on a branching field; false otherwise.
      */
-    fun move(steps:Int, board:Board){
+    fun move(steps:Int, board:Board): Boolean{
         position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
+        return hasBranch(board)
     }
 
+    /**
+     * Checks whether the player is currently on a branching field.
+     *
+     * @param board The game board used to access field information.
+     * @return True if the current field has a branch; false otherwise.
+     */
+    fun hasBranch(board:Board): Boolean{
+        return board.getField(position).hasBranch
+    }
     /**
      * Returns the player's current position on the board.
      *
