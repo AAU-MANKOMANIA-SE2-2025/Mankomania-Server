@@ -18,7 +18,7 @@ data class Player(
      * @param steps Number of steps to move forward.
      * @param board The game board, which provides the size for wrapping logic.
      */
-    fun move(steps:Int){
+    fun move(steps:Int, board:Board){
         position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
     }
 
