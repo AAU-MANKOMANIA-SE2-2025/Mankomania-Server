@@ -1,0 +1,29 @@
+From b8fce51a04a194b906255e13b5f73113bd000639 Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Tue, 1 Apr 2025 11:56:52 +0200
+Subject: [PATCH 6/8] feat(player): integrate Player with Board class and
+ update related unit tests
+
+---
+ .../example/mankomania_client/model/Player.kt |  2 +-
+ .../example/mankomania_client/PlayerTest.kt   | 21 +++++++++++--------
+ 2 files changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+index 070201b..50887e8 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -18,7 +18,7 @@ data class Player(
+      * @param steps Number of steps to move forward.
+      * @param board The game board, which provides the size for wrapping logic.
+      */
+-    fun move(steps:Int){
++    fun move(steps:Int, board:Board){
+         position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
+     }
+ 
+
+\ No newline at end of file
+-- 
+2.47.0
+

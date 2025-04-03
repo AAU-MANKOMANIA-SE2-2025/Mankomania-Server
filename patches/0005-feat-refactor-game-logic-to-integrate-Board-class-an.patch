@@ -1,0 +1,109 @@
+From 3bae9783bc79ed40d781d768ece2d936925a36ba Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Tue, 1 Apr 2025 11:45:54 +0200
+Subject: [PATCH 5/8] feat: refactor game logic to integrate Board class and
+ update class documentation
+
+---
+ .../example/mankomania_client/model/Board.kt  | 12 ++++++++
+ .../example/mankomania_client/model/Dice.kt   | 13 +++++++--
+ .../example/mankomania_client/model/Player.kt | 29 +++++++++++++++----
+ .../com/example/mankomania_client/DiceTest.kt |  9 ++++++
+ .../example/mankomania_client/PlayerTest.kt   | 15 ++++++++--
+ 6 files changed, 70 insertions(+), 9 deletions(-)
+ create mode 100644 src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+new file mode 100644
+index 0000000..e1967a0
+--- /dev/null
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+@@ -0,0 +1,12 @@
++package com.example.mankomania_client.model
++
++/**
++ * @author eles17
++ * Represents the game board with a fixed number of fields.
++ *
++ * @property size The total number of fields on the board.
++ */
++
++class Board (val size: Int = 40) {
++
++}
+\ No newline at end of file
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt
+index 92061a6..1dbb227 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt
+@@ -2,9 +2,18 @@ package com.example.mankomania_client.model
+ 
+ import kotlin.random.Random
+ 
+-class Dice {
+ 
+-    // roll dice method that rolls random number from 1 to 6
++
++/**
++ * @author eles17
++ * Simulates a dice that generates random numbers between 1 and 6.
++ */
++class Dice {
++    /**
++    * Rolls the dice.
++    *
++    * @return A random integer between 1 and 6 (inclusive).
++    */
+     fun roll(): Int {
+         val die1 = Random.nextInt(1,7) // 1 inclusive to 7 exclusive --> 1 to 6
+         val die2 = Random.nextInt(1,7)
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+index fbb08ac..070201b 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -1,15 +1,34 @@
+ package com.example.mankomania_client.model
+ 
++/**
++ * @author eles17
++ * Represents a player in the game.
++ *
++ * @property name The name of the player.
++ * @property position The current position of the player on the board.
++ */
+ data class Player(
+     val name: String,
+-    var position: Int = 0,
+-    var money: Int = 0,
+-    val maxFields: Int = 40// placeholder
++    var position: Int = 0
+     ) {
+-
++    /**
++     * Moves the player forward on the board by a given number of steps.
++     * If the end of the board is reached, the player wraps around to the start.
++     *
++     * @param steps Number of steps to move forward.
++     * @param board The game board, which provides the size for wrapping logic.
++     */
+     fun move(steps:Int){
+-        position= (position + steps) % maxFields //if on 40 --> wrap around back to 1
++        position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
+     }
+ 
++    /**
++     * Returns the player's current position on the board.
++     *
++     * @return The current field index.
++     */
++    fun getCurrentPosition(): Int {
++        return position
++    }
+ 
+ }
+\ No newline at end of file
+
+-- 
+2.47.0
+

@@ -1,0 +1,57 @@
+From 249e56684750eb6a6defb294acb4d78847865501 Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Mon, 31 Mar 2025 22:19:15 +0200
+Subject: [PATCH 3/8] feat: add board wrap-around logic to Player movement +
+ unit test to validate correct position after wrapping
+
+---
+ .../com/example/mankomania_client/model/Player.kt  |  6 ++++--
+ .../com/example/mankomania_client/PlayerTest.kt    | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+index 52b5efa..fc69959 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -3,10 +3,12 @@ package com.example.mankomania_client.model
+ data class Player(
+     val name: String,
+     var position: Int = 0,
+-    var money: Int = 0) {
++    var money: Int = 0,
++    val maxFields: Int = 32 // placeholder
++    ) {
+ 
+     fun move(steps:Int){
+-        position += steps
++        position= (position + steps) % maxFields //if on 30 --> wrap around back to 1
+     }
+ 
+ 
+diff --git a/app/src/test/java/com/example/mankomania_client/PlayerTest.kt b/app/src/test/java/com/example/mankomania_client/PlayerTest.kt
+index b768280..a05419f 100644
+--- a/app/src/test/java/com/example/mankomania_client/PlayerTest.kt
++++ b/app/src/test/java/com/example/mankomania_client/PlayerTest.kt
+@@ -16,4 +16,18 @@ class PlayerTest {
+         player.move(3)
+         assertEquals(8,player.position)
+     }
++
++    @Test
++    fun playerWrapsAroundBoardCorrectly (){
++        val player = Player(name = "blue", position = 30)
++        player.move(5)
++        assertEquals(3,player.position)
++    }
++
++    @Test
++    fun playerLandsExactlyOnLastField (){
++        val player = Player(name = "blue", position = 28)
++        player.move(4)
++        assertEquals(0,player.position) //32 % 32 = 0...
++    }
+ }
+\ No newline at end of file
+-- 
+2.47.0
+

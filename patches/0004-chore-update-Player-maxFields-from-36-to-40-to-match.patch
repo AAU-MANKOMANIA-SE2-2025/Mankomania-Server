@@ -1,0 +1,33 @@
+From acc99f7b7da04b681eb1bfbbb22b007b663c1d14 Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Tue, 1 Apr 2025 11:18:15 +0200
+Subject: [PATCH 4/8] chore: update Player maxFields from 36 to 40 to match new
+ board layout
+
+---
+ .../main/java/com/example/mankomania_client/model/Player.kt   | 4 ++--
+ app/src/test/java/com/example/mankomania_client/PlayerTest.kt | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+index fc69959..fbb08ac 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -4,11 +4,11 @@ data class Player(
+     val name: String,
+     var position: Int = 0,
+     var money: Int = 0,
+-    val maxFields: Int = 32 // placeholder
++    val maxFields: Int = 40// placeholder
+     ) {
+ 
+     fun move(steps:Int){
+-        position= (position + steps) % maxFields //if on 30 --> wrap around back to 1
++        position= (position + steps) % maxFields //if on 40 --> wrap around back to 1
+     }
+ 
+ 
+
+-- 
+2.47.0
+

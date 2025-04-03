@@ -1,0 +1,63 @@
+From 412cc2e9f8556707a6192b7c3cf1afc498a55a1d Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Mon, 31 Mar 2025 21:49:05 +0200
+Subject: [PATCH 2/8] feat: add Player data class with move logic and unit test
+
+---
+ .../example/mankomania_client/model/Player.kt | 13 +++++++++++++
+ .../example/mankomania_client/PlayerTest.kt   | 19 +++++++++++++++++++
+ gradle/libs.versions.toml                     |  2 +-
+ 3 files changed, 33 insertions(+), 1 deletion(-)
+ create mode 100644 src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+ create mode 100644 app/src/test/java/com/example/mankomania_client/PlayerTest.kt
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+new file mode 100644
+index 0000000..52b5efa
+--- /dev/null
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -0,0 +1,13 @@
++package com.example.mankomania_client.model
++
++data class Player(
++    val name: String,
++    var position: Int = 0,
++    var money: Int = 0) {
++
++    fun move(steps:Int){
++        position += steps
++    }
++
++
++}
+\ No newline at end of file
+diff --git a/app/src/test/java/com/example/mankomania_client/PlayerTest.kt b/app/src/test/java/com/example/mankomania_client/PlayerTest.kt
+new file mode 100644
+index 0000000..b768280
+--- /dev/null
++++ b/app/src/test/java/com/example/mankomania_client/PlayerTest.kt
+@@ -0,0 +1,19 @@
++package com.example.mankomania_client
++
++import com.example.mankomania_client.model.Player
++import org.junit.Test
++import org.junit.Assert.assertEquals
++
++
++class PlayerTest {
++
++    @Test
++    fun playerMovesCorrectlyBasedOnDiceRoll (){
++        val player = Player(name = "blue", position = 0)
++        player.move(5)
++        assertEquals(5,player.position)
++
++        player.move(3)
++        assertEquals(8,player.position)
++    }
++}
+\ No newline at end of file
+
+-- 
+2.47.0
+

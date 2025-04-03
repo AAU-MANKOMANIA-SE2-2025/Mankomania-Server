@@ -6,6 +6,7 @@
  */
 package org.example.mankomaniaserverkotlin.util
 
+
 interface DiceStrategy {
     fun roll(): Int
 }

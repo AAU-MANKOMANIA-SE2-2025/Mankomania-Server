@@ -1,0 +1,62 @@
+From eeb9a562ae00bc0c0c2f66e2cc5655c6972ef4d9 Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Mon, 31 Mar 2025 21:21:15 +0200
+Subject: [PATCH 1/8] implemented Dice class with roll method and unit test for
+ it
+
+---
+ .../com/example/mankomania_client/model/Dice.kt | 13 +++++++++++++
+ .../com/example/mankomania_client/DiceTest.kt   | 17 +++++++++++++++++
+ gradle/libs.versions.toml                       |  2 +-
+ 3 files changed, 31 insertions(+), 1 deletion(-)
+ create mode 100644 src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt
+ create mode 100644 app/src/test/java/com/example/mankomania_client/DiceTest.kt
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt
+new file mode 100644
+index 0000000..92061a6
+--- /dev/null
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Dice.kt
+@@ -0,0 +1,13 @@
++package com.example.mankomania_client.model
++
++import kotlin.random.Random
++
++class Dice {
++
++    // roll dice method that rolls random number from 1 to 6
++    fun roll(): Int {
++        val die1 = Random.nextInt(1,7) // 1 inclusive to 7 exclusive --> 1 to 6
++        val die2 = Random.nextInt(1,7)
++        return die1 + die2
++    }
++}
+\ No newline at end of file
+diff --git a/app/src/test/java/com/example/mankomania_client/DiceTest.kt b/app/src/test/java/com/example/mankomania_client/DiceTest.kt
+new file mode 100644
+index 0000000..5cff85b
+--- /dev/null
++++ b/app/src/test/java/com/example/mankomania_client/DiceTest.kt
+@@ -0,0 +1,17 @@
++package com.example.mankomania_client
++
++import com.example.mankomania_client.model.Dice
++import org.junit.Assert.assertTrue
++import org.junit.Test
++
++class DiceTest {
++
++    @Test
++    fun testRollDiceReturnsValidValue(){
++        val dice = Dice()
++        repeat(100){
++            val result = dice.roll()
++            assertTrue("Dice roll should be between 2 and 12, got $result", result in 2..12)
++        }
++    }
++}
+\ No newline at end of file
+
+-- 
+2.47.0
+

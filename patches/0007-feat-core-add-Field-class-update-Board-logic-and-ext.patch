@@ -1,0 +1,97 @@
+From 8ec90c8a2087b369eddfcde656dc0383831fd552 Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Tue, 1 Apr 2025 13:01:14 +0200
+Subject: [PATCH 7/8] feat(core): add Field class, update Board logic, and
+ extend Player tests
+
+- Introduced Field class to represent board fields with branching logic
+- Updated Board class to initialize fields using a branch condition lambda
+- Adjusted Player class to check for branching fields after movement
+- Extended PlayerTest with full movement and branching test coverage
+- Refactored test structure with setup() and grouped test sections
+---
+ .../example/mankomania_client/model/Board.kt  | 10 +-
+ .../example/mankomania_client/model/Field.kt  | 10 ++
+ .../example/mankomania_client/model/Player.kt | 16 +++-
+ .../example/mankomania_client/PlayerTest.kt   | 93 +++++++++++++++++--
+ 4 files changed, 116 insertions(+), 13 deletions(-)
+ create mode 100644 src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt
+
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+index e1967a0..932bebb 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+@@ -2,11 +2,17 @@ package com.example.mankomania_client.model
+ 
+ /**
+  * @author eles17
+- * Represents the game board with a fixed number of fields.
++ *  * Represents the game board composed of multiple fields.
+  *
+  * @property size The total number of fields on the board.
++ * @param isBranchField A function that determines whether a given field index should be a branching field.
++ *  Used to initialize the board with correct branch assignments.
+  */
+ 
+-class Board (val size: Int = 40) {
++class Board (val size: Int, isBranchField: (Int) -> Boolean) {
++    val fields: List<Field> = List(size) { index ->
++        Field(index, hasBranch = isBranchField(index))
++    }
+ 
++    fun getField(index:Int): Field = fields [index % fields.size]
+ }
+\ No newline at end of file
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt
+new file mode 100644
+index 0000000..0cb4a30
+--- /dev/null
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt
+@@ -0,0 +1,10 @@
++package com.example.mankomania_client.model
++
++/**
++ * @author eles17
++ * Represents a single field on the game board.
++ *
++ * @property index The position of this field on the board (0-based).
++ * @property hasBranch Indicates whether the field allows the player to choose a different path (branch).
++ */
++data class Field(val index:Int, val hasBranch: Boolean)
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+index 50887e8..64435c1 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -14,14 +14,26 @@ data class Player(
+     /**
+      * Moves the player forward on the board by a given number of steps.
+      * If the end of the board is reached, the player wraps around to the start.
++     * After moving, returns whether the new field is a branching field.
+      *
+      * @param steps Number of steps to move forward.
+-     * @param board The game board, which provides the size for wrapping logic.
++     * @param board The game board used for size and field information.
++     * @return True if the player landed on a branching field; false otherwise.
+      */
+-    fun move(steps:Int, board:Board){
++    fun move(steps:Int, board:Board): Boolean{
+         position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
++        return hasBranch(board)
+     }
+ 
++    /**
++     * Checks whether the player is currently on a branching field.
++     *
++     * @param board The game board used to access field information.
++     * @return True if the current field has a branch; false otherwise.
++     */
++    fun hasBranch(board:Board): Boolean{
++        return board.getField(position).hasBranch
++    }
+     /**
+      * Returns the player's current position on the board.
+      *
+
+-- 
+2.47.0
+
