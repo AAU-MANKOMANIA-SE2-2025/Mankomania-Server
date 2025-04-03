@@ -22,16 +22,20 @@ class GameWebSocketHandler : TextWebSocketHandler() {
     ) {
         val payload = message.payload
         try {
-            // Attempt to parse the payload into a JSON element to verify its validity.
+            // Verify JSON validity.
             SerializationUtils.json.parseToJsonElement(payload)
-            // If parsing is successful, simulate processing the message.
             println("Processed valid message: $payload")
-            // (In a real application, you might dispatch the message to appropriate handlers.)
+            // Variante B: Broadcast a response message to all clients.
+            Broadcaster.broadcast("response:Server says hi to all clients!")
         } catch (e: Exception) {
-            // If an exception occurs, assume the JSON is invalid.
             val errorJson = """{"errorCode":400,"errorMessage":"Error processing message","details":"$payload"}"""
             session.sendMessage(TextMessage(errorJson))
             println("Sent error response: $errorJson")
         }
+    }
+
+    override fun afterConnectionEstablished(session: WebSocketSession) {
+        Broadcaster.registerSession(session)
+        println("Session registered: ${session.id}")
     }
 }
