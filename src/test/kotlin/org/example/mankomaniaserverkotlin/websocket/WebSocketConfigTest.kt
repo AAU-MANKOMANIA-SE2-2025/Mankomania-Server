@@ -2,7 +2,6 @@ package org.example.mankomaniaserverkotlin.websocket
 
 import io.mockk.mockk
 import io.mockk.verify
-import org.example.mankomaniaserverkotlin.websocket.GameWebSocketHandler
 import org.example.mankomaniaserverkotlin.websocket.config.WebSocketConfig
 import org.junit.jupiter.api.Test
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
