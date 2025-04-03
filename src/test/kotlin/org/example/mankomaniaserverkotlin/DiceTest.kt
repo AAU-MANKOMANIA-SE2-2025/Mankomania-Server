@@ -1,7 +1,7 @@
 package org.example.mankomaniaserverkotlin
 
+import org.example.mankomaniaserverkotlin.util.DefaultDiceStrategy
 import org.example.mankomaniaserverkotlin.util.Dice
-import kotlin.test.assertTrue
 import org.springframework.test.util.AssertionErrors.assertTrue
 import kotlin.test.Test
 
@@ -17,7 +17,7 @@ class DiceTest {
      */
     @Test
     fun testRollDiceReturnsValidValue(){
-        val dice = Dice() // HAS PARAMETER NOW CHECK :...
+        val dice = Dice(DefaultDiceStrategy()) // HAS PARAMETER NOW CHECK :...
         repeat(100){
             val result = dice.roll()
             assertTrue("Dice roll should be between 2 and 12, got $result", result in 2..12)

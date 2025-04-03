@@ -1,22 +1,20 @@
+/**
+ * @file Dice.kt
+ * @author eles17
+ * @since
+ * @description responsible for rolling dice, delegating the actual roll logic to a strategy
+ */
 package org.example.mankomaniaserverkotlin.util
 
-import kotlin.random.Random
-
 /**
- * @author eles17
- * Simulates a dice that generates random numbers between 1 and 6.
+ * The Dice class is responsible for rolling dice, delegating the actual roll logic to a strategy.
  */
-
 class Dice(private val strategy: DiceStrategy) {
     /**
-     * Rolls the dice.
+     * Rolls the dice using the provided strategy.
      *
-     * @return A random integer between 1 and 6 (inclusive).
+     * @return The result of the dice roll according to the strategy.
      */
-    //fun rollDice(): Int = strategy.roll() TO BE IMPLEMENTED IN STORY #23
-    fun roll(): Int {
-        val die1 = Random.nextInt(1,7) // 1 inclusive to 7 exclusive --> 1 to 6
-        val die2 = Random.nextInt(1,7)
-        return die1 + die2
-    }
+    fun roll(): Int = strategy.roll()
+
 }
