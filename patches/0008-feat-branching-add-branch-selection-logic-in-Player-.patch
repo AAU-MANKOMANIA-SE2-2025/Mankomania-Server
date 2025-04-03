@@ -1,0 +1,134 @@
+From c098ad3a525fc2fb17353bc3f93bcce8e22dc9ff Mon Sep 17 00:00:00 2001
+From: eles17 <lev.starman8@gmail.com>
+Date: Tue, 1 Apr 2025 21:45:09 +0200
+Subject: [PATCH 8/8] feat(branching): add branch selection logic in Player and
+ update Board + tests
+
+- Updated Player.move() to trigger chooseBranch() on branching fields
+- Simulated branch choice using first available option and updated position
+- Added input validation for move steps
+- Extended Field to support branchOptions (default empty list)
+- Enhanced Board to accept custom field lists for testing
+- Modified PlayerTest setup to inject branchOptions into fields
+- Added unit tests for branch handling, chooseBranch(), and move logic
+---
+
+ .../example/mankomania_client/model/Board.kt  | 33 ++++++++++++++-----
+ .../example/mankomania_client/model/Field.kt  |  2 +-
+ .../example/mankomania_client/model/Player.kt | 30 ++++++++++++++++-
+ .../example/mankomania_client/PlayerTest.kt   | 32 +++++++++++++++++-
+ 5 files changed, 86 insertions(+), 12 deletions(-)
+
+
+ 
+ android {
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+index 932bebb..d2a0258 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Board.kt
+@@ -2,17 +2,32 @@ package com.example.mankomania_client.model
+ 
+ /**
+  * @author eles17
+- *  * Represents the game board composed of multiple fields.
++ * Represents the game board made up of multiple fields.
+  *
+- * @property size The total number of fields on the board.
+- * @param isBranchField A function that determines whether a given field index should be a branching field.
+- *  Used to initialize the board with correct branch assignments.
+- */
++ * There are two ways to create a board:
++ * 1. By passing a size and a rule that marks certain fields as branching.
++ * 2. By passing a custom list of Field objects (used in tests or advanced setups).
++ *
++ * @property fields List of all fields on the board.
++ * @property size Total number of fields (auto-calculated from the list).
++*/
++
++class Board (val fields: List<Field>) {
++
++    val size: Int = fields.size
+ 
+-class Board (val size: Int, isBranchField: (Int) -> Boolean) {
+-    val fields: List<Field> = List(size) { index ->
+-        Field(index, hasBranch = isBranchField(index))
+-    }
++    constructor(size: Int, isBranchField: (Int) -> Boolean) : this(
++        List(size) { index ->
++            Field(index, hasBranch = isBranchField(index))
++        }
++    )
+ 
++    /**
++     * Returns the field at the specified index.
++     * If the index is out of bounds, it wraps around using modulo to ensure a valid field is returned.
++     *
++     * @param index The index of the field to retrieve.
++     * @return The field at the given index, wrapped around if necessary.
++     */
+     fun getField(index:Int): Field = fields [index % fields.size]
+ }
+\ No newline at end of file
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt
+index 0cb4a30..ae4d930 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Field.kt
+@@ -7,4 +7,4 @@ package com.example.mankomania_client.model
+  * @property index The position of this field on the board (0-based).
+  * @property hasBranch Indicates whether the field allows the player to choose a different path (branch).
+  */
+-data class Field(val index:Int, val hasBranch: Boolean)
++data class Field(val index:Int, val hasBranch: Boolean, val branchOptions: List<Int> = emptyList())
+diff --git a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+index 64435c1..7c4eab9 100644
+--- a/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
++++ b/src/main/kotlin/org/example/mankomaniaserverkotlin/ToBeMoved/Player.kt
+@@ -21,8 +21,19 @@ data class Player(
+      * @return True if the player landed on a branching field; false otherwise.
+      */
+     fun move(steps:Int, board:Board): Boolean{
++        require(steps >= 0) {"Steps must be non-negative."}
++
+         position = (position + steps) % board.size //if on 40 --> wrap around back to field 1
+-        return hasBranch(board)
++
++        //retrieve the field once and check for branch
++        val currentField = board.getField(position) //Board.getField(position) must return a Field with populated branchOptions if hasBranch == true
++        return if(currentField.hasBranch) {
++            chooseBranch(currentField.branchOptions)
++            true
++        }else{
++            false
++        }
++
+     }
+ 
+     /**
+@@ -34,6 +45,23 @@ data class Player(
+     fun hasBranch(board:Board): Boolean{
+         return board.getField(position).hasBranch
+     }
++
++    /**
++     * Simulates a branch choice when landing on a branching field.
++     *
++     * @param branchOptions A list of possible next field indices to choose from
++     */
++    fun chooseBranch(branchOptions: List<Int>){
++        //simulate a basic decision: choose the first option
++        val chosen = branchOptions.firstOrNull()
++        if(chosen != null) {
++            println("Branching: Player '$name' chooses to go to field $chosen.")
++            position = chosen
++        }else{
++            println("Branching: No branch options available for Player '$name'.")
++        }
++    }
++
+     /**
+      * Returns the player's current position on the board.
+      *
+
+-- 
+2.47.0
+
