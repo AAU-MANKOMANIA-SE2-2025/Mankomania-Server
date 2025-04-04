@@ -23,4 +23,6 @@ object WebSocketManager {
     fun clearSessions() {
         sessions.clear()
     }
+
+    fun getActiveSessionCount(): Int = Broadcaster.sessions.size
 }
