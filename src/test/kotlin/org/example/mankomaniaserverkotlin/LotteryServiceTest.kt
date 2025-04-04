@@ -23,31 +23,39 @@ class LotteryServiceTest {
     // Payment when using “go to” fields
     @Test
     fun processGoToField() {
+        val initialPool = lotteryService.getPoolAmount()
         assertTrue(lotteryService.processGoToField(richPlayer))
         assertEquals(95000, richPlayer.balance)
-        assertEquals(5000, lotteryService.getPoolAmount())
+        assertEquals(initialPool + 5000, lotteryService.getPoolAmount())
     }
 
     // Payment when crossing the lottery field
     @Test
     fun processPassingLottery() {
+        val initialPool = lotteryService.getPoolAmount()
         assertTrue(lotteryService.processPassingLottery(richPlayer))
         assertEquals(95000, richPlayer.balance)
-        assertEquals(5000, lotteryService.getPoolAmount())
+        assertEquals(initialPool + 5000, lotteryService.getPoolAmount())
     }
 
     // Correct payout when landing directly on the field
     @Test
     fun landingOnLotteryWithMoney() {
+        val initialPool = lotteryService.getPoolAmount()
         lotteryService.processGoToField(richPlayer)
+        val poolAfterPayment = lotteryService.getPoolAmount()
+        assertEquals(initialPool + 5000, poolAfterPayment)
+        val initialBalance = richPlayer.balance
         val result = lotteryService.processLandingOnLottery(richPlayer)
         assertTrue(result.success)
-        assertEquals(100000, richPlayer.balance)
+        assertEquals(initialBalance + poolAfterPayment, richPlayer.balance)
+        assertEquals(0, lotteryService.getPoolAmount()) // Pool gets empty
     }
 
     // Pool update logic and edge cases (e.g. empty pool)
     @Test
     fun landingOnEmptyPool() {
+        assertEquals(0, lotteryService.getPoolAmount())
         val result = lotteryService.processLandingOnLottery(richPlayer)
         assertTrue(result.success)
         assertEquals(50000, richPlayer.balance)

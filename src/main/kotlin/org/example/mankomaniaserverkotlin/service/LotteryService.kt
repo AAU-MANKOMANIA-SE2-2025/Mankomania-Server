@@ -69,4 +69,19 @@ class LotteryService {
     fun getWinners(): Set<String> = winners.toSet()
 
     data class LotteryResult(val success: Boolean, val message: String)
+
+    // Lottery amount
+    fun getCurrentLotteryAmount(): Int {
+        return lotteryPool.getPoolAmount()
+    }
+
+    // payment notification
+    fun processPaymentWithNotification(player: Player, amount: Int, reason: String): Pair<Boolean, String> {
+        val success = processPayment(player, amount, reason)
+        return if (success) {
+            true to "$reason – $amount added to the lottery"
+        } else {
+            false to "$player won"
+        }
+    }
 }

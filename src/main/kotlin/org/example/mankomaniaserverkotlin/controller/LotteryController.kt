@@ -2,6 +2,7 @@ package org.example.mankomaniaserverkotlin.lottery
 
 import org.example.mankomaniaserverkotlin.service.LotteryService
 import org.example.mankomaniaserverkotlin.model.Player
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -42,4 +43,23 @@ class LotteryController(private val lotteryService: LotteryService) {
             "playerBalance" to player.balance
         )
     }
+
+    @GetMapping("/current")
+    fun getCurrentLotteryAmount(): ResponseEntity<Int> {
+        return ResponseEntity.ok(lotteryService.getCurrentLotteryAmount())
+    }
+
+    @PostMapping("/pay-with-notification")
+    fun processPaymentWithNotification(
+        @RequestBody player: Player,
+        @RequestParam reason: String
+    ): ResponseEntity<Map<String, Any>> {
+        val (success, message) = lotteryService.processPaymentWithNotification(player, 5000, reason)
+        return ResponseEntity.ok(mapOf(
+            "success" to success,
+            "message" to message,
+            "newPoolAmount" to lotteryService.getPoolAmount()
+        ))
+    }
+
 }
