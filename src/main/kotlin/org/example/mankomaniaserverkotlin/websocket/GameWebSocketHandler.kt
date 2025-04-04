@@ -1,6 +1,7 @@
 package org.example.mankomaniaserverkotlin.websocket
 
 import org.example.mankomaniaserverkotlin.websocket.util.SerializationUtils
+import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
@@ -15,6 +16,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
  * Note: This implementation is self-contained and does not depend on external message classes.
  */
 class GameWebSocketHandler : TextWebSocketHandler() {
+    private val maxPlayers = 1
+    private val broadcastResponseDemonstrationDemo = Broadcaster.broadcast("response:Server says hi to all clients!")
+
     // This method is now explicitly public so it can be called by tests.
     public override fun handleTextMessage(
         session: WebSocketSession,
@@ -25,8 +29,6 @@ class GameWebSocketHandler : TextWebSocketHandler() {
             // Verify JSON validity.
             SerializationUtils.json.parseToJsonElement(payload)
             println("Processed valid message: $payload")
-            // Variante B: Broadcast a response message to all clients.
-            Broadcaster.broadcast("response:Server says hi to all clients!")
         } catch (e: Exception) {
             val errorJson = """{"errorCode":400,"errorMessage":"Error processing message","details":"$payload"}"""
             session.sendMessage(TextMessage(errorJson))
@@ -35,6 +37,11 @@ class GameWebSocketHandler : TextWebSocketHandler() {
     }
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
+        if (WebSocketManager.getActiveSessionCount() >= maxPlayers) {
+            session.close(CloseStatus(4001, "Room is full"))
+            println("Verbindung abgelehnt: Raum voll (Session ${session.id})")
+            return
+        }
         Broadcaster.registerSession(session)
         println("Session registered: ${session.id}")
     }
