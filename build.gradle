@@ -31,6 +31,7 @@ ext {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'  // Add this line
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
 	compileOnly 'org.projectlombok:lombok'
